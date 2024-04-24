@@ -101,6 +101,8 @@ public:
     int insert_right(string tname, node t);
     double score_sum();
     double score_average();
+    double score_max();
+    double score_min();
     void print_data_inorder();
     void print_data_preorder(node *p);
     void print_data_postorder(node *p);
@@ -182,6 +184,42 @@ double my_tree::score_average() {
     return score_sum() / node_count;
 }
 
+double max_score(node *p) {
+    if (p == NULL)
+        return 0; 
+    
+    double left_max = max_score(p->left);
+    double right_max = max_score(p->right);
+    
+    // Compare current node's score with the maximum scores from left and right subtrees
+    double current_max = (p->score > left_max) ? p->score : left_max;
+    current_max = (right_max > current_max) ? right_max : current_max;
+    
+    return current_max;
+}
+
+double my_tree::score_max() {
+    return max_score(root);
+}
+
+double min_score(node *p) {
+    if (p == NULL)
+        return 0;
+
+    double left_min = min_score(p->left);
+    double right_min = min_score(p->right);
+    
+    double current_min = (p->score < left_min) ? p->score : left_min;
+    current_min = (right_min < current_min) ? right_min : current_min;
+    
+    return current_min;
+}
+
+double my_tree::score_min() {
+    return min_score(root);
+}
+
+
 void inorder_print(node *p) {
     if (p == NULL)
         return;
@@ -235,6 +273,9 @@ int main() {
     thetree.print_data_preorder(thetree.root);
     cout << "\nPostorder Traversal Result:\n";
     thetree.print_data_postorder(thetree.root);
+
+    cout<<"Max: "<<thetree.score_max()<<endl;
+    cout<<"Min: "<<thetree.score_min()<<endl;
 
     return 0;
 }
